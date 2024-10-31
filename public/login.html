@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Search</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- Load Google API Platform Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Login Box -->
+    <div class="container">
+        <div class="login-box">
+            <h2>Music Search</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <!----<button type="button" class="btn google-btn" onclick="googleLogin()">Login with Google</button> -->
+                <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+                <div id="error-messages" class="error-messages"></div> <!-- Error messages container -->
+            </form>
+        </div>
+    </div>
+
+    <!-- Particles.js Configuration -->
+    <script src="particles-config.js"></script>
+    <!-- Include auth.js for Google login function -->
+    <script src="auth.js"></script>
+    <script src="login.js"></script> <!-- Include the new login.js file -->
+</body>
+</html>

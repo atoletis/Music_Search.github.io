@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <div class="signup-box">
+            <h2>Sign Up</h2>
+            <form id="signupForm">
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <span class="tooltip" id="email-tooltip"></span>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <span class="tooltip" id="password-tooltip"></span>
+                </div>
+                <div class="error-messages" id="error-messages"></div> <!-- Container for error messages -->
+                <button type="submit" class="btn" onclick="handleSignup(event)">Sign Up</button>
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="signup.js"></script>
+    <script src="particles-config.js"></script>
+</body>
+</html>
