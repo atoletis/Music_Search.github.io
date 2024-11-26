@@ -1,36 +1,61 @@
 const express = require('express');
-const request = require('request');
+const axios = require('axios');
 const cors = require('cors');
-require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const apiKey = "UmlOUTRKSUJlWnMtR0JnYWhPMXg6WXB6elVyT3hUZENJQXJhSVJ3ZjNBQQ==";
+const port = 3000; // Choose an available port
 
+// Enable CORS for the proxy server
 app.use(cors());
+
+// Use bodyParser middleware to handle JSON requests
 app.use(express.json());
 
-// Proxy endpoint
-app.post('/api/search', (req, res) => {
-    const options = {
-        url: 'https://6c2ed68fed824a629b2aac6d178af637.us-central1.gcp.cloud.es.io/spotify_playlists/_search',
-        method: 'POST',
-        headers: {
-            'Authorization': `ApiKey ${apiKey}`, // Use your API key from .env
-            'Content-Type': 'application/json'
-        },
-        json: true,
-        body: req.body // Forward the request body
-    };
+const elasticsearchUrl = 'https://5e2a9ceda2124ef780b28484f61ef5f8.us-central1.gcp.cloud.es.io';
+const apiKey = 'UUxQRmFaTUItSVFGQXB2U3QtbmQ6ejhOYUl2NG1SdzZDSUU1T3hkTXR5QQ=='; // Replace with your actual API key
 
-    request(options, (error, response, body) => {
-        if (error) {
-            return res.status(500).json({ error: 'Error communicating with Elasticsearch' });
+// Proxy POST request for 'shoe_prices' index
+app.post('/search-shoes', async (req, res) => {
+  try {
+    console.log('Entered /search-shoes');
+    const response = await axios.post(
+      `${elasticsearchUrl}/shoe_prices/_search`,
+      req.body, // Pass the body from the client request to Elasticsearch
+      {
+        headers: {
+          Authorization: `ApiKey ${apiKey}`,
+          'Content-Type': 'application/json',
         }
-        res.json(body); // Return the response from Elasticsearch
-    });
+      }
+    );
+    res.json(response.data); // Return the Elasticsearch response to the client
+  } catch (error) {
+    console.error('Error fetching data from Elasticsearch for shoe_prices:', error);
+    res.status(500).json({ error: 'Error fetching data from Elasticsearch for shoe_prices' });
+  }
 });
 
-app.listen(PORT, () => {
-    console.log(`Proxy server running on http://localhost:${PORT}`);
+// Proxy POST request for 'nike_shoes_sales' index
+app.post('/search-nike-shoes', async (req, res) => {
+  try {
+    console.log('Entered /search-nike-shoes');
+    const response = await axios.post(
+      `${elasticsearchUrl}/nike_shoes_sales/_search`,
+      req.body, // Pass the body from the client request to Elasticsearch
+      {
+        headers: {
+          Authorization: `ApiKey ${apiKey}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    res.json(response.data); // Return the Elasticsearch response to the client
+  } catch (error) {
+    console.error('Error fetching data from Elasticsearch for nike_shoes_sales:', error);
+    res.status(500).json({ error: 'Error fetching data from Elasticsearch for nike_shoes_sales' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Proxy server listening at http://localhost:${port}`);
 });

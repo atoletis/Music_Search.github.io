@@ -3,27 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Songs</title>
+    <title>Shoe Search</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
     <div id="particles-js"></div>
 
-    <header class="header">
-        <form id="searchForm" onsubmit="searchSongs(event)">
-            <input type="text" id="searchInput" placeholder="Search for songs or artists..." required>
-            <button type="submit" class="btn">Search</button>
-        </form>
-    </header>
-
     <div class="container">
-        <div id="results" class="results-grid"></div> <!-- Grid container for displaying search results -->
-        <div id="error-messages" class="error-messages"></div> <!-- Error messages container -->
+        <h1>Shoe Search</h1>
+        <!-- Form for searching shoes -->
+        <form id="shoeSearchForm">
+            <label for="brand">Brand:</label>
+            <input type="text" id="brand" name="brand">
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model">
+            <label for="type">Type:</label>
+            <input type="text" id="type" name="type">
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender">
+            <label for="size">Size:</label>
+            <input type="text" id="size" name="size">
+            <label for="color">Color:</label>
+            <input type="text" id="color" name="color">
+            <label for="material">Material:</label>
+            <input type="text" id="material" name="material">
+            <label for="price">Price (USD):</label>
+            <input type="text" id="price" name="price">
+            <button type="submit">Search</button>
+        </form>
+        <!-- Container for displaying shoe cards -->
+        <div id="shoePricesContainer">
+            <div id="shoePricesList" class="card-container"></div>
+        </div>
     </div>
-
     <script src="particles-config.js"></script>
-    <script src="search.js"></script>
-    <script src="spotify.js"></script> <!-- Load spotify.js for song previews -->
+    <script src="shoe_prices.js"></script>
+    <script src="recommend.js"></script> <!-- Include the JS file -->
 </body>
 </html>
+
