@@ -8,6 +8,7 @@ Autocorrect for typos (e.g., "Nikey" → "Nike").
 Price Comparison Links to Google Search.
 ## Prerequisites
 Node.js installed on your system.  
+mongodb is installed and configured.  
 Elasticsearch instance set up and running.  
 ## Installation
 Clone the repository:  
