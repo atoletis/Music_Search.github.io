@@ -34,6 +34,43 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Shoe search schema for search history
+const shoeSearchSchema = new mongoose.Schema({
+    email: { type: String, required: true },
+    brand: String,
+    model: String,
+    type: String,
+    gender: String,
+    size: String,
+    color: String,
+    material: String,
+    price: String,
+    date: { type: Date, default: Date.now },
+});
+
+const ShoeSearch = mongoose.model('ShoeSearch', shoeSearchSchema);
+
+const correctionIntent = {
+    fields: ["brand", "model", "type", "gender", "size", "color", "material", "price"],
+    corrections: {
+        "Nike": ["Nikee", "Nikey", "Nikes", "nIkEe", "Nicke"],
+        "Adidas": ["Adiddas", "Adidaas", "Adids", "Addidas", "Adidass", "adidAs"],
+        "Reebok": ["Rebok", "Rebock", "Reboc", "Reeebok", "Rebokks"],
+        "Converse": ["Convers", "Converce", "Converz", "Conversee"],
+        "Puma": ["Pumma", "Pumaa", "Puuma", "Pumah"],
+        "Vans": ["Vanz", "Vanns", "Van's", "Vannz"],
+        "Black": ["Blak", "Blac", "Blk", "Bllack"],
+        "White": ["Wite", "Whit", "Whyte", "Whitt"],
+        "Grey": ["Gray", "Greay", "Graye", "Gr"],
+        "Leather": ["Leathr", "Lethar", "Lthr", "Lehter"],
+        "Mesh": ["Msh", "Meesh", "Meshh", "Meehsh"],
+        "Running": ["Runing", "Ruuning", "Runnin", "Runin"],
+        "Casual": ["Casul", "Casule", "Cazual", "Causal"],
+        "Women": ["Womenn", "Weman", "Woman", "Wooman"],
+        "Men": ["Menn", "Man", "Meen", "Mann"]
+    }
+};
+
 // Route to handle Signup
 app.post('/api/auth/signup', async (req, res) => {
     const { email, password } = req.body;
@@ -118,6 +155,87 @@ app.post('/api/auth/google', async (req, res) => {
         res.status(401).send('Unauthorized');
     }
 });
+
+// Route to handle saving shoe search history
+app.post('/save-shoe-search', async (req, res) => {
+    const { email, brand, model, type, gender, size, color, material, price, date } = req.body;
+
+    try {
+        const newSearch = new ShoeSearch({
+            email,
+            brand,
+            model,
+            type,
+            gender,
+            size,
+            color,
+            material,
+            price,
+            date,  // Ensure the date is passed from the frontend or generated server-side
+        });
+
+        await newSearch.save();
+        res.status(201).json({ message: 'Search data saved successfully.' });
+    } catch (error) {
+        console.error('Error saving search data:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+});
+
+app.get('/get-search-history', async (req, res) => {
+    const email = req.query.email;
+    if (!email) {
+        return res.status(400).send({ message: 'Email is required' });
+    }
+
+    try {
+        const searchHistory = await ShoeSearch.find({ email })
+            .sort({ date: -1 }) // Sort by date (latest first)
+            .exec();
+
+        // Return search history as JSON
+        res.status(200).json(searchHistory);
+    } catch (error) {
+        console.error('Error fetching search history:', error);
+        res.status(500).send({ message: 'Error fetching search history' });
+    }
+});
+
+app.post('/check-spelling', (req, res) => {
+    const { brand, model, type, gender, size, color, material, price } = req.body;
+    console.log("ENters");
+
+    const correctWord = (input, field) => {
+        const corrections = correctionIntent.corrections;
+        const normalizedInput = input.toLowerCase();
+        for (const correct in corrections) {
+            const normalizedCorrect = correct.toLowerCase();
+            const normalizedVariants = corrections[correct].map(variant => variant.toLowerCase());
+
+            if (normalizedInput === normalizedCorrect || normalizedVariants.includes(normalizedInput)) {
+                return correct; // Return the correctly capitalized version
+            }
+        }
+        return input; // Return the original input if no match is found
+    };
+
+    const correctedFields = {
+        brand: correctWord(brand, 'brand'),
+        model: model, // Assuming no corrections defined for "model"
+        type: correctWord(type, 'type'),
+        gender: correctWord(gender, 'gender'),
+        size: size, // Assuming no corrections defined for "size"
+        color: correctWord(color, 'color'),
+        material: correctWord(material, 'material'),
+        price: price // Price is not corrected as requested
+    };
+    console.log(correctedFields);
+    res.json({
+        message: "Spell check completed",
+        correctedFields
+    });
+});
+
 
 // Start server
 app.listen(PORT, () => {

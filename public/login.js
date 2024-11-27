@@ -22,22 +22,28 @@ async function handleLogin(event) {
     if (errors.length > 0) {
         displayErrors(errors);
     } else {
-        // Send the login data to the backend
-        const response = await fetch("http://localhost:8000/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-        });
+        try {
+            // Send the login data to the backend
+            const response = await fetch("http://localhost:8000/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok) {
-            // Redirect to the desired page after login
-            window.location.href = "main.html"; // Change this to your target page
-        } else {
-            displayErrors([data.message || 'Login failed. Please try again.']);
+            if (response.ok) {
+                // Redirect to the desired page after login
+                const encodedEmail = encodeURIComponent(email); // Encode email for safe URL usage
+                window.location.href = `main.html?email=${encodedEmail}`;
+            } else {
+                displayErrors([data.message || 'Login failed. Please try again.']);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            displayErrors(['An error occurred. Please try again later.']);
         }
     }
 }
